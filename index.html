@@ -180,5 +180,98 @@ setTimeout(() => {
   loadCncSupabaseCalibrations();
 }, 500);
 </script>
+<script>
+function addCncMachine() {
+  const name = prompt("Nom de la nouvelle machine");
+  if (!name) return;
 
+  const select = document.getElementById("machine");
+
+  const exists = [...select.options].some(
+    o => o.text.toLowerCase() === name.toLowerCase()
+  );
+
+  if (!exists) {
+    select.add(new Option(name, name));
+    select.value = name;
+    toast("Machine ajoutée");
+  } else {
+    toast("Cette machine existe déjà");
+  }
+}
+
+function addCncMaterial() {
+  const name = prompt("Nom de la nouvelle matière");
+  if (!name) return;
+
+  const code = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "_");
+
+  if (DATA[code]) {
+    toast("Cette matière existe déjà");
+    return;
+  }
+
+  DATA[code] = {
+    name: {
+      fr: name,
+      en: name,
+      pt: name
+    },
+    family: {
+      fr: "Matière ajoutée",
+      en: "Added material",
+      pt: "Material adicionado"
+    },
+    rem: {
+      fr: "Matière créée depuis l'application.",
+      en: "Material created from application.",
+      pt: "Material criado pela aplicação."
+    },
+    pMin: 0.3,
+    pMax: 0.7,
+    eMin: 0.2,
+    eMax: 0.4,
+    tools: JSON.parse(JSON.stringify(DATA["pmma"].tools))
+  };
+
+  fillMaterials(code);
+  toast("Matière ajoutée");
+}
+
+function addCncTool() {
+  const mid = document.getElementById("mat").value;
+
+  if (!DATA[mid]) {
+    toast("Choisir une matière");
+    return;
+  }
+
+  const name = prompt("Nom du nouvel outil");
+  if (!name) return;
+
+  const code = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "_");
+
+  DATA[mid].tools[code] = {
+    label: {
+      fr: name,
+      en: name,
+      pt: name
+    },
+    usage: {
+      fr: "Outil créé depuis l'application.",
+      en: "Tool created from application.",
+      pt: "Ferramenta criada pela aplicação."
+    },
+    values: [180,260,380,0.03,0.06,0.10]
+  };
+
+  fillTools(code);
+
+  toast("Outil ajouté");
+}
+</script>
 </body></html>
